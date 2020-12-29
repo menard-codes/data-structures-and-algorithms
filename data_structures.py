@@ -213,10 +213,13 @@ class BinaryTree:
                 if current.get_left() is None:
                     return current.set_left(new_node)
                 current = current.get_left()
+                continue
             elif data > current.get_data():
                 if current.get_right() is None:
                     return current.set_right(new_node)
                 current = current.get_right()
+                continue
+            return
 
     def delete(self, data):
         pass
@@ -315,3 +318,33 @@ def bfs(graph, vertex):
             for connection in graph.get_connections_of(v):
                 node_queue.enqueue(connection)
     return _visited
+
+
+def invert_binary_tree(binary_tree, current_node):
+    # base case: we're on leaf node
+    if current_node.get_left() is None and current_node.get_right() is None:
+        return
+
+    # recursive case
+    if current_node.get_left() is not None:
+        invert_binary_tree(binary_tree, current_node.get_left())
+    left, right = current_node.get_left(), current_node.get_right()
+    current_node.set_left(right)
+    current_node.set_right(left)
+    if current_node.get_left() is not None:
+        invert_binary_tree(binary_tree, current_node.get_left())
+    return binary_tree
+
+
+def main():
+    from random import sample
+    my_tree = BinaryTree()
+    a = sample(range(1, 30), 15)
+    for x in a:
+        my_tree.insert(x)
+    print("Original Tree =>", my_tree)
+    print("\nInverted Tree =>", invert_binary_tree(my_tree, my_tree.root))
+
+
+if __name__ == '__main__':
+    main()
