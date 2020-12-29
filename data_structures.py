@@ -339,8 +339,8 @@ def invert_binary_tree(binary_tree, current_node):
 def main():
     from random import sample
     my_tree = BinaryTree()
-    a = sample(range(1, 30), 15)
-    for x in a:
+    random_numbers = sample(range(1, 30), 15)
+    for x in random_numbers:
         my_tree.insert(x)
     print("Original Tree =>", my_tree)
     print("\nInverted Tree =>", invert_binary_tree(my_tree, my_tree.root))
