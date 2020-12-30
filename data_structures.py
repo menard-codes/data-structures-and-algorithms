@@ -239,6 +239,9 @@ class Graph:
     def __contains__(self, item):
         return item in self.nodes
 
+    def number_of_nodes(self):
+        return len(self.nodes)
+
     def get_connections_of(self, node):
         if node in self.nodes:
             return self.nodes[node]
@@ -296,21 +299,32 @@ def dfs_iteration(graph, vertex):
     return _visited
 
 
-def dfs(graph, vertex, visited=None):
+def pre_dfs(graph, start_vertex, visited=None):
     if visited is None:
         visited = []
-    if vertex not in visited:
-        visited.append(vertex)
-        for connection in graph.get_connections_of(vertex):
+    if start_vertex not in visited:
+        visited.append(start_vertex)
+        for connection in graph.get_connections_of(start_vertex):
             if connection not in visited:
-                dfs(graph, connection, visited)
+                pre_dfs(graph, connection, visited)
     return visited
 
 
-def bfs(graph, vertex):
+def post_dfs(graph, start_vertex, visited=None):
+    if visited is None:
+        visited = []
+    if start_vertex not in visited:
+        for connection in graph.get_connections_of(start_vertex):
+            if connection not in visited:
+                post_dfs(graph, connection, visited)
+        visited.append(start_vertex)
+    return visited
+
+
+def bfs(graph, start_vertex):
     _visited = []
     node_queue = Queue()
-    node_queue.enqueue(vertex)
+    node_queue.enqueue(start_vertex)
     while len(node_queue) > 0:
         v = node_queue.deque()
         if v not in _visited:
@@ -336,14 +350,36 @@ def invert_binary_tree(binary_tree, current_node):
     return binary_tree
 
 
+from collections import deque
+
+
+def topological_sort(graph, start_vertex, visited=None):
+    # Just implement a post DFS and inverse it to do
+    # topological sort.
+    if visited is None:
+        visited = deque()
+    if start_vertex not in visited:
+        for connection in graph.get_connections_of(start_vertex):
+            if connection not in visited:
+                topological_sort(graph, connection, visited)
+        visited.appendleft(start_vertex)
+    return list(visited)
+
+
 def main():
-    from random import sample
-    my_tree = BinaryTree()
-    random_numbers = sample(range(1, 30), 15)
-    for x in random_numbers:
-        my_tree.insert(x)
-    print("Original Tree =>", my_tree)
-    print("\nInverted Tree =>", invert_binary_tree(my_tree, my_tree.root))
+    my_graph = Graph()
+    my_graph.add_node(1, [2, 3, 10])
+    my_graph.add_node(2, [3])
+    my_graph.add_node(3, [4, 6])
+    my_graph.add_node(4, [6])
+    my_graph.add_node(5, [])
+    my_graph.add_node(6, [7])
+    my_graph.add_node(7, [5])
+    my_graph.add_node(8, [9])
+    my_graph.add_node(9, [])
+    my_graph.add_node(10, [9])
+    print(my_graph)
+    print(topological_sort(my_graph, 1))
 
 
 if __name__ == '__main__':
